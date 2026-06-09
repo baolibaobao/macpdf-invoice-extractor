@@ -43,6 +43,8 @@ jobs:
             --windowed \
             --target-architecture x86_64 \
             --collect-all customtkinter \
+            --collect-all backports \
+            --collect-all jaraco \
             app.py
 
       - name: Build debug console executable
@@ -53,6 +55,8 @@ jobs:
             --onefile \
             --target-architecture x86_64 \
             --collect-all customtkinter \
+            --collect-all backports \
+            --collect-all jaraco \
             app.py
 
       - name: Package app
