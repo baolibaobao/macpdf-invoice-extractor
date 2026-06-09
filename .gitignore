@@ -1,0 +1,34 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Local IDE files
+.idea/
+.vscode/
+
+# Local generated outputs
+outputs/
+*.xlsx
+*.xls
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec
+
+# Local real invoice samples may contain private information.
+tests/fixtures/real_invoices/*.pdf
+!tests/fixtures/real_invoices/.gitkeep
+!tests/fixtures/real_invoices/README.md
+
+# OS files
+.DS_Store
+Thumbs.db

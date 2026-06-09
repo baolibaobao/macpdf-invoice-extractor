@@ -1,0 +1,33 @@
+1. 系统总体架构
+系统采用 MVC架构 结合 多线程异步处理，确保UI响应流畅。同时引入 CI/CD 流水线 解决跨平台编译问题。
+2. 核心技术栈
+业务逻辑语言：Python 3.10+
+GUI框架：CustomTkinter (跨平台UI界面)。
+PDF处理：PyMuPDF (fitz 库，极速解析XML附件与文本)。
+数据整理与导出：pandas, openpyxl。
+CI/CD 构建与打包：GitHub Actions + PyInstaller (利用云端macOS环境编译原生应用)。
+3. 核心模块设计
+3.1 文件调度模块 (file_manager.py)
+功能：接收根目录路径，使用 os.walk 递归遍历所有子文件夹。
+过滤机制：仅保留扩展名为 .pdf 的文件，忽略 .ofd、.jpg 等。
+3.2 发票信息解析引擎 (invoice_parser.py) [核心]
+采用双轨降级解析策略以保证速度和准确度：
+Track A (优先：内置XML提取)：使用 PyMuPDF 检查PDF的 embedded_files。如果存在 XML 附件（数电票特征），直接使用 xml.etree.ElementTree 解析XML标签。（速度：微秒级，准确率：100%）
+Track B (降级：正则+坐标提取)：如果没有XML，读取PDF文本流。
+使用正则表达式提取：发票号码、开票日期、各方税号等。
+使用字符串切片或 Bounding Box (坐标框) 提取表格明细（项目名称拼接）。（速度：毫秒级，准确率：95%+）
+防呆机制：如果解析出纯图片（文本长度<20），抛出自定义异常 NotTextPDFError，在UI日志中提示“忽略纯图片发票”。
+3.3 数据导出模块 (excel_builder.py)
+功能：接收解析引擎返回的字典列表 List[Dict]，使用 pandas.DataFrame 转换为表格。
+字段映射表：严格按照图3输出：["文件路径", "文件名称", "发票代码", "发票号码", "发票类型", "开票日期", "金额合计", "税额合计", "税率", "价税合计", "购买方名称", "购买方纳税人识别号", "销售方名称", "销售方纳税人识别号", "备注", "项目名称"]。
+4. 跨平台文件路径规范
+由于代码在Windows编写，在Mac云端打包，并在Mac端运行：
+绝对禁止使用硬编码的反斜杠 \ 或正斜杠 /。
+必须使用 os.path.join 或 pathlib.Path 构建所有路径。
+打包后的资源文件（如UI依赖的图片、字体）必须使用 sys._MEIPASS 获取运行时绝对路径。
+5. 自动化构建与发布流程 (CI/CD Flow)
+Push Trigger: 开发者在Windows使用Git将代码 push 到GitHub主分支。
+Cloud Runner: GitHub Actions 触发，分配一台全新的 macos-latest 虚拟机。
+Environment Setup: 云端自动安装 Python 3.10 及 requirements.txt 中的依赖。
+Build Process: 云端执行 PyInstaller 命令，生成包含Mac专属动态链接库(.dylib)的 .app 文件。
+Artifact Upload: 生成压缩包，供开发者在 GitHub 页面下载至本地。

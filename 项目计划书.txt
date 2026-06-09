@@ -1,0 +1,20 @@
+1. 项目概述
+项目名称：Mac版数电发票信息提取与汇总工具 (DZ-PDF Extractor for Mac)
+项目背景：用户需要从批量PDF格式的数电发票中快速提取信息，并导出为固定格式的Excel。由于目标用户为Mac系统，而开发者仅有Windows设备且不希望在Mac虚拟机中配置开发环境。本项目将采用Python跨平台开发，在Windows进行全部编码，并引入 GitHub Actions 云端自动化构建技术，实现“Windows写代码 -> 云端自动打包Mac应用 -> Mac虚拟机纯净测试”的现代化开发流。
+2. 目标与范围
+核心功能：选择发票文件夹、自动过滤非PDF、提取数电票核心要素、按模板导出Excel。
+非功能性要求：毫秒级处理速度、99%以上准确率。
+工程化目标：彻底解放Mac虚拟机，实现代码推送到GitHub后，云端服务器自动完成Mac .app 的构建与发布。
+3. 开发环境与资源
+开发机：Windows 10/11 (主力编码、逻辑调试、UI测试)
+云端构建机：GitHub Actions (提供免费的 macos-latest 云端运行器)
+测试验收机：Mac OS 虚拟机 (纯净系统，无需安装Python环境，仅用于双击运行测试)
+主要工具：PyCharm 2025.1.3, Python 3.10+, Git
+4. 进度计划表 (按里程碑划分)
+阶段	里程碑任务		工作地点/环境
+阶段一：需求与准备	搭建Windows本地环境，收集数电票PDF测试样本，初始化Git仓库。		Windows
+阶段二：核心逻辑	编写 invoice_parser.py (提取XML/正则解析) 和 excel_builder.py。		Windows
+阶段三：界面开发	使用 CustomTkinter 实现界面布局及多线程异步防卡顿逻辑。		Windows
+阶段四：联调与压测	在Windows下进行批量发票的极限测试，生成 requirements.txt。		Windows
+阶段五：云端构建(CI)	编写 GitHub Actions 的 .yml 工作流文件，配置自动打包脚本。		GitHub Cloud
+阶段六：虚拟机验收	下载云端生成的Mac .app 包，在Mac虚拟机中执行 xattr -cr 解除隔离并进行验收测试。		Mac 虚拟机
