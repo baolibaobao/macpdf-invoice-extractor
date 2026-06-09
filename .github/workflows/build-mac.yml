@@ -44,6 +44,8 @@ jobs:
           import tkinter
 
           interp = tkinter.Tcl()
+          tcl_version = str(tkinter.TclVersion)
+          tk_version = str(tkinter.TkVersion)
           tcl_dir = Path(interp.eval("info library")).resolve()
           search_roots = [
               tcl_dir.parent,
@@ -54,7 +56,7 @@ jobs:
 
           tk_dir = None
           for root in search_roots:
-              for name in ("tk8.6", "tk8.7"):
+              for name in (f"tk{tk_version}", "tk8.6", "tk8.5", "tk8.7"):
                   candidate = root / name
                   if (candidate / "tk.tcl").exists():
                       tk_dir = candidate.resolve()
@@ -67,11 +69,19 @@ jobs:
           if tk_dir is None:
               raise SystemExit("Cannot find tk.tcl")
 
+          print(f"TCL_VERSION={tcl_version}")
+          print(f"TK_VERSION={tk_version}")
           print(f"TCL_LIBRARY={tcl_dir}")
           print(f"TK_LIBRARY={tk_dir}")
+          print(f"TCL_DATA_NAME=tcl{tcl_version}")
+          print(f"TK_DATA_NAME=tk{tk_version}")
           PY
+          echo "TCL_VERSION=$TCL_VERSION"
+          echo "TK_VERSION=$TK_VERSION"
           echo "TCL_LIBRARY=$TCL_LIBRARY"
           echo "TK_LIBRARY=$TK_LIBRARY"
+          echo "TCL_DATA_NAME=$TCL_DATA_NAME"
+          echo "TK_DATA_NAME=$TK_DATA_NAME"
 
       - name: Build macOS .app
         run: |
@@ -83,8 +93,8 @@ jobs:
             --collect-all customtkinter \
             --collect-all backports \
             --hidden-import backports.tarfile \
-            --add-data "$TCL_LIBRARY:_tcl_data/tcl8.6" \
-            --add-data "$TK_LIBRARY:_tcl_data/tk8.6" \
+            --add-data "$TCL_LIBRARY:_tcl_data/$TCL_DATA_NAME" \
+            --add-data "$TK_LIBRARY:_tcl_data/$TK_DATA_NAME" \
             app.py
 
       - name: Build debug console executable
@@ -97,8 +107,8 @@ jobs:
             --collect-all customtkinter \
             --collect-all backports \
             --hidden-import backports.tarfile \
-            --add-data "$TCL_LIBRARY:_tcl_data/tcl8.6" \
-            --add-data "$TK_LIBRARY:_tcl_data/tk8.6" \
+            --add-data "$TCL_LIBRARY:_tcl_data/$TCL_DATA_NAME" \
+            --add-data "$TK_LIBRARY:_tcl_data/$TK_DATA_NAME" \
             app.py
 
       - name: Package app
