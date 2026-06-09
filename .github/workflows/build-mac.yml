@@ -36,6 +36,43 @@ jobs:
         run: |
           python -m pytest tests -q
 
+      - name: Locate Tcl/Tk runtime
+        run: |
+          python - <<'PY' >> "$GITHUB_ENV"
+          from pathlib import Path
+          import sys
+          import tkinter
+
+          interp = tkinter.Tcl()
+          tcl_dir = Path(interp.eval("info library")).resolve()
+          search_roots = [
+              tcl_dir.parent,
+              Path(sys.base_prefix) / "lib",
+              Path("/usr/local/lib"),
+              Path("/opt/homebrew/lib"),
+          ]
+
+          tk_dir = None
+          for root in search_roots:
+              for name in ("tk8.6", "tk8.7"):
+                  candidate = root / name
+                  if (candidate / "tk.tcl").exists():
+                      tk_dir = candidate.resolve()
+                      break
+              if tk_dir:
+                  break
+
+          if not (tcl_dir / "init.tcl").exists():
+              raise SystemExit(f"Cannot find init.tcl under {tcl_dir}")
+          if tk_dir is None:
+              raise SystemExit("Cannot find tk.tcl")
+
+          print(f"TCL_LIBRARY={tcl_dir}")
+          print(f"TK_LIBRARY={tk_dir}")
+          PY
+          echo "TCL_LIBRARY=$TCL_LIBRARY"
+          echo "TK_LIBRARY=$TK_LIBRARY"
+
       - name: Build macOS .app
         run: |
           pyinstaller \
@@ -46,6 +83,8 @@ jobs:
             --collect-all customtkinter \
             --collect-all backports \
             --hidden-import backports.tarfile \
+            --add-data "$TCL_LIBRARY:_tcl_data/tcl8.6" \
+            --add-data "$TK_LIBRARY:_tcl_data/tk8.6" \
             app.py
 
       - name: Build debug console executable
@@ -58,6 +97,8 @@ jobs:
             --collect-all customtkinter \
             --collect-all backports \
             --hidden-import backports.tarfile \
+            --add-data "$TCL_LIBRARY:_tcl_data/tcl8.6" \
+            --add-data "$TK_LIBRARY:_tcl_data/tk8.6" \
             app.py
 
       - name: Package app
