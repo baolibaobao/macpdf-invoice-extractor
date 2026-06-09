@@ -45,16 +45,39 @@ jobs:
             --collect-all customtkinter \
             app.py
 
+      - name: Build debug console executable
+        run: |
+          pyinstaller \
+            --name DZPDFExtractorDebug \
+            --console \
+            --target-architecture x86_64 \
+            --collect-all customtkinter \
+            app.py
+
       - name: Package app
         run: |
           test -d "dist/DZPDFExtractor.app"
           file "dist/DZPDFExtractor.app/Contents/MacOS/DZPDFExtractor"
           tar -czf "DZPDFExtractor-macOS-BigSur-Intel.tar.gz" -C dist "DZPDFExtractor.app"
 
+      - name: Package debug executable
+        run: |
+          test -f "dist/DZPDFExtractorDebug"
+          file "dist/DZPDFExtractorDebug"
+          tar -czf "DZPDFExtractor-macOS-BigSur-Intel-Debug.tar.gz" -C dist "DZPDFExtractorDebug"
+
       - name: Upload app artifact
         uses: actions/upload-artifact@v7
         with:
           name: DZPDFExtractor-macOS-BigSur-Intel
           path: DZPDFExtractor-macOS-BigSur-Intel.tar.gz
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload debug artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: DZPDFExtractor-macOS-BigSur-Intel-Debug
+          path: DZPDFExtractor-macOS-BigSur-Intel-Debug.tar.gz
           if-no-files-found: error
           retention-days: 14
