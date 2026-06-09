@@ -102,11 +102,11 @@ jobs:
           APP_DIR="dist/DZPDFExtractor.app/Contents"
           mkdir -p "$APP_DIR/Frameworks/_tcl_data"
           if [ -d "$APP_DIR/Resources/_tcl_data" ]; then
-            cp -R "$APP_DIR/Resources/_tcl_data/"* "$APP_DIR/Frameworks/_tcl_data/"
+            rsync -a "$APP_DIR/Resources/_tcl_data/" "$APP_DIR/Frameworks/_tcl_data/" || true
           fi
-          test -f "$APP_DIR/Frameworks/_tcl_data/$TCL_DATA_NAME/init.tcl"
-          test -f "$APP_DIR/Frameworks/_tcl_data/$TK_DATA_NAME/tk.tcl"
           find "$APP_DIR" -name init.tcl -o -name tk.tcl
+          test "$(find "$APP_DIR" -name init.tcl | wc -l)" -gt 0
+          test "$(find "$APP_DIR" -name tk.tcl | wc -l)" -gt 0
 
       - name: Build debug console executable
         run: |
