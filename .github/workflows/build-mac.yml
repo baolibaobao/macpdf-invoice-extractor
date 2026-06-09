@@ -9,7 +9,7 @@ on:
 jobs:
   build-macos:
     name: Build DZPDFExtractor.app Big Sur Intel
-    runs-on: macos-13
+    runs-on: macos-15-intel
     env:
       MACOSX_DEPLOYMENT_TARGET: "11.0"
       ARCHFLAGS: "-arch x86_64"
