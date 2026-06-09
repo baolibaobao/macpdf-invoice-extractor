@@ -7,11 +7,11 @@
 1. 打开 `Actions`
 2. 选择 `Build macOS App`
 3. 打开最新一次成功运行
-4. 在 `Artifacts` 下载 `DZPDFExtractor-macOS`
+4. 在 `Artifacts` 下载 `DZPDFExtractor-macOS-BigSur-Intel`
 
 下载后会得到以下文件之一：
 
-- `DZPDFExtractor-macOS.tar.gz`
+- `DZPDFExtractor-macOS-BigSur-Intel.tar.gz`
 
 ## 2. 解压应用
 
@@ -19,7 +19,7 @@
 
 ```bash
 cd ~/Downloads
-tar -xzf DZPDFExtractor-macOS.tar.gz
+tar -xzf DZPDFExtractor-macOS-BigSur-Intel.tar.gz
 ```
 
 解压后会得到：
@@ -50,7 +50,7 @@ open ~/Downloads/DZPDFExtractor.app
 
 ## 5. 测试内容
 
-建议在纯净 Mac 虚拟机中测试：
+建议在纯净 Intel Mac 或 Big Sur 虚拟机中测试：
 
 - 能否正常启动
 - 能否选择发票文件夹
@@ -73,6 +73,12 @@ xattr -cr /路径/到/DZPDFExtractor.app
 
 ```bash
 spctl --assess --verbose /路径/到/DZPDFExtractor.app
+```
+
+如果应用打开后闪退，请从终端启动主程序，复制报错内容：
+
+```bash
+~/Downloads/DZPDFExtractor.app/Contents/MacOS/DZPDFExtractor
 ```
 
 本项目当前没有做 Apple Developer ID 签名和公证，所以 Gatekeeper 提示属于正常现象。

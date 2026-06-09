@@ -8,8 +8,11 @@ on:
 
 jobs:
   build-macos:
-    name: Build DZPDFExtractor.app Intel
-    runs-on: macos-15-intel
+    name: Build DZPDFExtractor.app Big Sur Intel
+    runs-on: macos-13
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "11.0"
+      ARCHFLAGS: "-arch x86_64"
 
     steps:
       - name: Checkout repository
@@ -24,6 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           uname -m
+          sw_vers
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
@@ -37,18 +41,20 @@ jobs:
             --name DZPDFExtractor \
             --noconsole \
             --windowed \
+            --target-architecture x86_64 \
             --collect-all customtkinter \
             app.py
 
       - name: Package app
         run: |
           test -d "dist/DZPDFExtractor.app"
-          tar -czf "DZPDFExtractor-macOS-Intel.tar.gz" -C dist "DZPDFExtractor.app"
+          file "dist/DZPDFExtractor.app/Contents/MacOS/DZPDFExtractor"
+          tar -czf "DZPDFExtractor-macOS-BigSur-Intel.tar.gz" -C dist "DZPDFExtractor.app"
 
       - name: Upload app artifact
         uses: actions/upload-artifact@v7
         with:
-          name: DZPDFExtractor-macOS-Intel
-          path: DZPDFExtractor-macOS-Intel.tar.gz
+          name: DZPDFExtractor-macOS-BigSur-Intel
+          path: DZPDFExtractor-macOS-BigSur-Intel.tar.gz
           if-no-files-found: error
           retention-days: 14
