@@ -97,6 +97,17 @@ jobs:
             --add-data "$TK_LIBRARY:_tcl_data/$TK_DATA_NAME" \
             app.py
 
+      - name: Fix Tcl/Tk location inside .app
+        run: |
+          APP_DIR="dist/DZPDFExtractor.app/Contents"
+          mkdir -p "$APP_DIR/Frameworks/_tcl_data"
+          if [ -d "$APP_DIR/Resources/_tcl_data" ]; then
+            cp -R "$APP_DIR/Resources/_tcl_data/"* "$APP_DIR/Frameworks/_tcl_data/"
+          fi
+          test -f "$APP_DIR/Frameworks/_tcl_data/$TCL_DATA_NAME/init.tcl"
+          test -f "$APP_DIR/Frameworks/_tcl_data/$TK_DATA_NAME/tk.tcl"
+          find "$APP_DIR" -name init.tcl -o -name tk.tcl
+
       - name: Build debug console executable
         run: |
           pyinstaller \
