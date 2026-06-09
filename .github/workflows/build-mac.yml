@@ -8,8 +8,8 @@ on:
 
 jobs:
   build-macos:
-    name: Build DZPDFExtractor.app
-    runs-on: macos-latest
+    name: Build DZPDFExtractor.app Intel
+    runs-on: macos-15-intel
 
     steps:
       - name: Checkout repository
@@ -23,6 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          uname -m
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
@@ -42,12 +43,12 @@ jobs:
       - name: Package app
         run: |
           test -d "dist/DZPDFExtractor.app"
-          tar -czf "DZPDFExtractor-macOS.tar.gz" -C dist "DZPDFExtractor.app"
+          tar -czf "DZPDFExtractor-macOS-Intel.tar.gz" -C dist "DZPDFExtractor.app"
 
       - name: Upload app artifact
         uses: actions/upload-artifact@v7
         with:
-          name: DZPDFExtractor-macOS
-          path: DZPDFExtractor-macOS.tar.gz
+          name: DZPDFExtractor-macOS-Intel
+          path: DZPDFExtractor-macOS-Intel.tar.gz
           if-no-files-found: error
           retention-days: 14
