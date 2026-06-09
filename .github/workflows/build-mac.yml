@@ -44,6 +44,8 @@ jobs:
             --windowed \
             --target-architecture x86_64 \
             --collect-all customtkinter \
+            --collect-all numpy \
+            --collect-all pandas \
             --collect-all backports \
             --hidden-import backports.tarfile \
             app.py
@@ -56,6 +58,8 @@ jobs:
             --onefile \
             --target-architecture x86_64 \
             --collect-all customtkinter \
+            --collect-all numpy \
+            --collect-all pandas \
             --collect-all backports \
             --hidden-import backports.tarfile \
             app.py
