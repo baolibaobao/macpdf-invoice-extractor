@@ -50,6 +50,7 @@ jobs:
           pyinstaller \
             --name DZPDFExtractorDebug \
             --console \
+            --onefile \
             --target-architecture x86_64 \
             --collect-all customtkinter \
             app.py
